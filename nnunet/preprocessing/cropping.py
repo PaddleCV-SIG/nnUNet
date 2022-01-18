@@ -12,6 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+from tqdm import tqdm
 import SimpleITK as sitk
 import numpy as np
 import shutil
@@ -231,11 +232,14 @@ class ImageCropper(object):
             case_identifier = get_case_identifier(case)
             list_of_args.append((case, case_identifier, overwrite_existing))
         # print("list_of_args", list_of_args)
-
-        p = Pool(self.num_threads)
-        p.starmap(self.load_crop_save, list_of_args)
-        p.close()
-        p.join()
+        if self.num_threads == 1:
+            for arg in tqdm(list_of_args):
+                self.load_crop_save(*arg)
+        else:
+            p = Pool(self.num_threads)
+            p.starmap(self.load_crop_save, list_of_args)
+            p.close()
+            p.join()
 
     def load_properties(self, case_identifier):
         with open(
