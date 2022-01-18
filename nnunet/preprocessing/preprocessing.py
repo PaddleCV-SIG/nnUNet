@@ -16,6 +16,7 @@ import time
 from collections import OrderedDict
 from copy import deepcopy
 
+from tqdm import tqdm
 from batchgenerators.augmentations.utils import resize_segmentation
 from nnunet.configuration import (
     default_num_threads,
@@ -518,7 +519,7 @@ class GenericPreprocessor(object):
                 all_args.append(args)
             if num_threads[i] == 1:
                 print("----------- running prep sequentially")
-                for arg in all_args:
+                for arg in tqdm(all_args):
                     # print(arg, arg)
                     print("-------- start to prep: ", arg[1])
                     self._run_internal(*arg)
@@ -816,7 +817,7 @@ class PreprocessorFor2D(GenericPreprocessor):
                 all_args.append(args)
         if num_threads == 1:
             print("-------- running 2d prep sequentially")
-            for arg in all_args:
+            for arg in tqdm(all_args):
                 print("--------- start to prep ", arg[1])
                 self._run_internal(*arg)
         else:
